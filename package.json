@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "client": "cd react-ui && npm start",
-    "server": "nodemon server.js",
+    "server": "nodemon ./server/server.js",
     "dev": "concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.3",
+    "mongodb": "^3.0.6",
+    "mongoose": "^5.0.14",
     "nodemon": "^1.17.3"
   },
   "devDependencies": {
