@@ -5,7 +5,8 @@ import React, {Component} from 'react';
 import BigCalendar from 'react-big-calendar';
 import events from './events/events';
 import moment from 'moment';
-import style from 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './style/home.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
@@ -32,15 +33,16 @@ export default class Home extends Component {
         let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
 
         return (
-            <BigCalendar
-                style={style}
-                culture='en-GB'
-                events={events}
-                views={allViews}
-                step={60}
-                showMultiDayTimes
-                defaultDate={new Date(2015, 3, 1)}
-            />
+            <div className="mainCalendar">
+                <BigCalendar
+                    culture='en-GB'
+                    events={events}
+                    views={allViews}
+                    step={60}
+                    showMultiDayTimes
+                    defaultDate={new Date(2015, 3, 1)}
+                />
+            </div>
         );
     }
 }
