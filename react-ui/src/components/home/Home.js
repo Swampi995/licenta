@@ -2,8 +2,14 @@
  * Created by swpmr on 3/11/2018.
  */
 import React, {Component} from 'react';
+import BigCalendar from 'react-big-calendar';
+import events from './events/events';
+import moment from 'moment';
+import style from 'react-big-calendar/lib/css/react-big-calendar.css';
 
-class Home extends Component {
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
+
+export default class Home extends Component {
     state = {response: ''};
 
     componentDidMount() {
@@ -22,13 +28,19 @@ class Home extends Component {
     };
 
     render() {
+
+        let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
+
         return (
-            <div className="App">
-                <h1>Response</h1>
-                {this.state.response}
-            </div>
+            <BigCalendar
+                style={style}
+                culture='en-GB'
+                events={events}
+                views={allViews}
+                step={60}
+                showMultiDayTimes
+                defaultDate={new Date(2015, 3, 1)}
+            />
         );
     }
 }
-
-export default Home;

@@ -2,11 +2,26 @@ import React from 'react'
 import Main from '../main/Main'
 import Header from '../header/Header'
 
-const App = () => (
-  <div>
-    <Header />
-    <Main />
-  </div>
-)
+export default class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            logged: false
+        };
+        this.changeLoginState = this.changeLoginState.bind(this);
+    }
 
-export default App
+    changeLoginState(value) {
+        this.setState({logged : value})
+    }
+
+    render() {
+        return (
+            <div>
+                <Header changeLoginState={this.changeLoginState}/>
+                {this.state.logged ? <Main/> : null}
+            </div>
+        )
+    }
+}
+

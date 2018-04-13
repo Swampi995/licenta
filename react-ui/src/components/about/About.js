@@ -7,6 +7,6 @@ const About = () => (
   <div>
     <h1>Welcome to the Tornadoes Website!</h1>
   </div>
-)
+);
 
 export default About;
