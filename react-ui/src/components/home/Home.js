@@ -11,36 +11,16 @@ import './style/home.css';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 export default class Home extends Component {
-    state = {response: ''};
-
-    componentDidMount() {
-        this.callApi()
-            .then(res => this.setState({response: res[0].user}))
-            .catch(err => console.log(err));
-    }
-
-    callApi = async () => {
-        const response = await fetch('http://localhost:5000/api/users');
-        const body = await response.json();
-
-        if (response.status !== 200) throw Error(body.message);
-
-        return body;
-    };
 
     render() {
-
-        let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
-
         return (
-            <div className="mainCalendar">
+            <div className='mainCalendar'>
                 <BigCalendar
                     culture='en-GB'
                     events={events}
-                    views={allViews}
                     step={60}
+                    defaultView='week'
                     showMultiDayTimes
-                    defaultDate={new Date(2015, 3, 1)}
                 />
             </div>
         );

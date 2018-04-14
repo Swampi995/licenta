@@ -3,6 +3,7 @@ import Main from '../main/Main'
 import Header from '../header/Header'
 
 export default class App extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -18,7 +19,7 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
-                <Header changeLoginState={this.changeLoginState}/>
+                <Header logged={this.state.logged} changeLoginState={this.changeLoginState}/>
                 {this.state.logged ? <Main/> : null}
             </div>
         )

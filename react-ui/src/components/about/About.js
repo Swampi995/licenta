@@ -5,7 +5,7 @@ import React from 'react'
 
 const About = () => (
   <div>
-    <h1>Welcome to the Tornadoes Website!</h1>
+    <h1>About Page</h1>
   </div>
 );
 

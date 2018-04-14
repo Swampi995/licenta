@@ -2,3 +2,7 @@
     position: relative;
     top: 10px;
 }
+
+.link-ref {
+    text-decoration: none;
+}
