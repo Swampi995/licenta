@@ -8,15 +8,6 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import { FlatButton, TextField } from 'material-ui'
 
-const customContentStyle = {
-  width: '35%',
-  maxWidth: 'none',
-}
-
-const buttonsStyle = {
-  margin: 12,
-}
-
 export default class Login extends React.Component {
   constructor (props) {
     super(props)
@@ -44,6 +35,9 @@ export default class Login extends React.Component {
     axios.get('http://localhost:5000/api/users')
       .then(res => {
         this.setState({users: res.data})
+      })
+      .catch(err => {
+        console.error(err)
       })
   }
 
@@ -75,6 +69,7 @@ export default class Login extends React.Component {
   }
 
   doLogin (user) {
+    this.props.setLoggedUser(user.user);
     this.props.doLogin()
     this.setState({open: false})
   }
@@ -96,32 +91,32 @@ export default class Login extends React.Component {
 
   render () {
     const actionLogin = [
-      <FlatButton style={buttonsStyle} onClick={() => {this.setState({register: !this.state.register})}}
+      <FlatButton className='login-form-button' onClick={() => {this.setState({register: !this.state.register})}}
                   label='Register' primary/>,
-      <RaisedButton style={buttonsStyle} onClick={this.handleRequestClose} secondary>
+      <RaisedButton className='login-form-button' onClick={this.handleRequestClose} secondary>
         Cancel
       </RaisedButton>,
-      <RaisedButton style={buttonsStyle} onClick={this.handleRequestLogin} primary>
+      <RaisedButton className='login-form-button' onClick={this.handleRequestLogin} primary>
         Login
       </RaisedButton>
     ]
     const actionsRegister = [
-      <RaisedButton style={buttonsStyle} onClick={this.handleRequestClose} secondary>
+      <RaisedButton className='login-form-button' onClick={this.handleRequestClose} secondary>
         Cancel
       </RaisedButton>,
-      <RaisedButton style={buttonsStyle} primary>
+      <RaisedButton className='login-form-button' primary>
         Register
       </RaisedButton>,
     ]
     const textFieldLogin = [
-      <div>
+      <div key={'textFieldLogin'}>
         <TextField
           id='username'
           floatingLabelText='Username'
           errorText={this.state.errorText}
           value={this.state.username}
           onChange={this.handleChange('username')}
-        /><br />
+        /><br/>
         <TextField
           id='password'
           floatingLabelText='Password'
@@ -132,14 +127,14 @@ export default class Login extends React.Component {
       </div>
     ]
     const textFieldRegister = [
-      <div>
+      <div key={'textFieldRegister'}>
         <TextField
           id='username'
           floatingLabelText='New Username'
           errorText={this.state.errorText}
           value={this.state.username}
           onChange={this.handleChange('username')}
-        /><br />
+        /><br/>
         <TextField
           id='password'
           floatingLabelText='New Password'
@@ -148,7 +143,7 @@ export default class Login extends React.Component {
           onChange={this.handleChange('password')}
         />
         <TextField
-          id='password'
+          id='confirmPassword'
           floatingLabelText='Confirm Password'
           errorText={this.state.errorText}
           type='password'
@@ -159,12 +154,12 @@ export default class Login extends React.Component {
     return (
       <div>
         <RaisedButton onClick={this.handleClickOpen}>Login</RaisedButton>
-        <Dialog open={this.state.open} title={this.state.register ? 'Register' : 'Login'}
-                contentStyle={customContentStyle} actions={this.state.register ? actionsRegister : actionLogin}
+        <Dialog className='login-dialog' open={this.state.open} title={this.state.register ? 'Register' : 'Login'}
+                actions={!this.state.register ? actionLogin: actionsRegister}
                 onRequestClose={this.handleRequestClose}>
-          {this.state.register ? textFieldRegister : textFieldLogin}
-          <br />
-          <br />
+          {!this.state.register ? textFieldLogin : textFieldRegister}
+          <br/>
+          <br/>
         </Dialog>
       </div>
     )
@@ -172,5 +167,6 @@ export default class Login extends React.Component {
 }
 
 Login.propTypes = {
+  setLoggedUser: PropTypes.func,
   doLogin: PropTypes.func
 }
