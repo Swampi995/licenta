@@ -25,6 +25,7 @@ export default class Login extends React.Component {
     this.handleClickOpen = this.handleClickOpen.bind(this)
     this.handleRequestClose = this.handleRequestClose.bind(this)
     this.handleRequestLogin = this.handleRequestLogin.bind(this)
+    this.handleRequestRegister = this.handleRequestRegister.bind(this)
   }
 
   componentWillMount () {
@@ -44,7 +45,7 @@ export default class Login extends React.Component {
   addUser (user) {
     axios.post('http://localhost:5000/api/users', user)
       .then(res => {
-        this.setState({users: res})
+        this.loadUsers();
       })
       .catch(err => {
         console.error(err)
@@ -68,10 +69,28 @@ export default class Login extends React.Component {
     user[0] && user[0].password === this.state.password ? this.doLogin(user[0]) : this.setErrorMessage('Wrong username or password!')
   }
 
+  requestRegister () {
+    let user = this.state.users.filter(user => user.user === this.state.username);
+    if (user.length === 0) {
+      this.state.password === this.state.confirmPassword ? this.postUser() : this.setErrorMessage('Password must be the same!')
+    } else this.setErrorMessage('Username already used!');
+  }
+
   doLogin (user) {
     this.props.setLoggedUser(user.user);
     this.props.doLogin()
     this.setState({open: false})
+  }
+
+  postUser () {
+    let user = {
+      id: this.state.users.length + 1,
+      user: this.state.username,
+      password: this.state.password
+    }
+
+    this.addUser(user);
+    this.setState({register: !this.state.register})
   }
 
   setErrorMessage (message) {
@@ -80,6 +99,10 @@ export default class Login extends React.Component {
 
   handleRequestLogin = () => {
     this.state.username !== '' && this.state.password !== '' ? this.requestLogin() : this.setErrorMessage('Wrong username or password!')
+  }
+
+  handleRequestRegister = () => {
+    this.state.username !== '' && this.state.password !== '' ? this.requestRegister() : this.setErrorMessage('Username and password must not be empty!')
   }
 
   handleChange = name => event => {
@@ -104,7 +127,7 @@ export default class Login extends React.Component {
       <RaisedButton className='login-form-button' onClick={this.handleRequestClose} secondary>
         Cancel
       </RaisedButton>,
-      <RaisedButton className='login-form-button' primary>
+      <RaisedButton className='login-form-button' onClick={this.handleRequestRegister} primary>
         Register
       </RaisedButton>,
     ]
@@ -147,7 +170,7 @@ export default class Login extends React.Component {
           floatingLabelText='Confirm Password'
           errorText={this.state.errorText}
           type='password'
-          onChange={this.handleChange('password')}
+          onChange={this.handleChange('confirmPassword')}
         />
       </div>
     ]

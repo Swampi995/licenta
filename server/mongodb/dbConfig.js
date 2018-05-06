@@ -21,7 +21,7 @@ module.exports = function (app) {
     });
 
     app.use('/api', router);
-    const mongoDB = 'mongodb://<USER>:<PASSWORD>@ds259855.mlab.com:59855/your-organizer';
+    const mongoDB = 'mongodb://swampi:garile@ds259855.mlab.com:59855/your-organizer';
     mongoose.connect(mongoDB);
 
     const db = mongoose.connection;
@@ -38,6 +38,7 @@ module.exports = function (app) {
             let newUser = new User();
             newUser.user = req.body.user;
             newUser.password = req.body.password;
+            newUser.id = req.body.id;
             newUser.save(function (err) {
                 if (err)
                     res.send(err);
