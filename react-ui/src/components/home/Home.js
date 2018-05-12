@@ -4,9 +4,9 @@
 import React, { Component } from 'react'
 import { GridList, GridTile, Paper } from 'material-ui'
 import './style/home.css'
-import axios from 'axios'
 import { Link } from 'react-router-dom'
 import AddRoom from './AddRoom'
+import HomeService from './api'
 
 export default class Home extends Component {
 
@@ -14,7 +14,6 @@ export default class Home extends Component {
         super(props)
         this.handleOpenAddRoom = this.handleOpenAddRoom.bind(this)
         this.handleCloseAddRoom = this.handleCloseAddRoom.bind(this)
-        this.loadRooms = this.loadRooms.bind(this)
         this.state = {
             open: false,
             rooms: []
@@ -22,17 +21,9 @@ export default class Home extends Component {
     }
 
     componentDidMount() {
-        this.loadRooms();
-    }
-
-    loadRooms() {
-        axios.get('http://localhost:5000/api/rooms')
-            .then(res => {
-                this.setState({rooms: res.data})
-            })
-            .catch(err => {
-                console.error(err)
-            })
+        HomeService.loadRooms().then((data) => {
+            this.setState({rooms: data})
+        })
     }
 
     handleOpenAddRoom = () => {

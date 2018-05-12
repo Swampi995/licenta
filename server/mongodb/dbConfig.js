@@ -23,7 +23,7 @@ module.exports = function (app) {
     })
 
     app.use('/api', router)
-    const mongoDB = 'mongodb://swampi:garile@ds259855.mlab.com:59855/your-organizer'
+    const mongoDB = 'mongodb://localhost/your-organizer'
     mongoose.connect(mongoDB)
 
     const db = mongoose.connection
