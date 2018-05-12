@@ -12,32 +12,62 @@ export default class Room extends Component {
         this.handleChange = this.handleChange.bind(this)
         this.postRoom = this.postRoom.bind(this)
         this.addRoom = this.addRoom.bind(this)
+        this.setErrorMessage = this.setErrorMessage.bind(this)
         this.state = {
             name: 'Room',
-            seats: 50
+            seats: 50,
+            errorText: ''
         }
     }
 
     handleChange = name => event => {
+        this.setErrorMessage('')
         this.setState({
             [name]: event.target.value,
         })
     }
 
+    setErrorMessage (message) {
+        this.setState({errorText: message})
+    }
+
     addRoom () {
-        let room = {
-            id: 1,
-            name: this.state.name,
-            seats: this.state.seats,
-            calendar: 1,
+        let roomName = this.props.rooms.filter(room => room.name === this.state.name)
+        if (roomName.length === 0) {
+            let room = {
+                name: this.state.name,
+                seats: this.state.seats,
+            }
+
+            let calendar = {
+                name: this.state.name,
+                events: [],
+            }
+
+            this.postRoom(room);
+            this.postCalendar(calendar);
+            this.props.handleCloseAddRoom();
+        }
+        else {
+            this.setErrorMessage('Room name already exists!');
         }
 
-        this.postRoom(room);
+    }
+
+    postCalendar (calendar) {
+        axios.post('http://localhost:5000/api/calendars', calendar)
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.error(err)
+            })
     }
 
     postRoom (room) {
         axios.post('http://localhost:5000/api/rooms', room)
             .then(res => {
+                this.props.loadRooms();
                 console.log(res);
             })
             .catch(err => {
@@ -64,6 +94,7 @@ export default class Room extends Component {
                 <TextField
                     onChange={this.handleChange('name')}
                     value={this.state.name}
+                    errorText={this.state.errorText}
                     floatingLabelText="Room Name"
                 /><br />
                 <TextField

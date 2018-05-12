@@ -84,7 +84,6 @@ export default class Login extends React.Component {
 
   postUser () {
     let user = {
-      id: this.state.users.length + 1,
       user: this.state.username,
       password: this.state.password
     }

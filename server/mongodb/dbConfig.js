@@ -1,8 +1,9 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const User = require('./models/users')
+const User = require('./models/user')
 const Room = require('./models/room')
+const Calendar = require('./models/calendar')
 const router = express.Router()
 
 module.exports = function (app) {
@@ -39,7 +40,6 @@ module.exports = function (app) {
             let newUser = new User()
             newUser.user = req.body.user
             newUser.password = req.body.password
-            newUser.id = req.body.id
             newUser.save(function (err) {
                 if (err)
                     res.send(err)
@@ -60,13 +60,48 @@ module.exports = function (app) {
             let newRoom = new Room()
             newRoom.name = req.body.name
             newRoom.seats = req.body.seats
-            newRoom.calendar = req.body.calendar
-            newRoom.id = req.body.id
+            newRoom.calendarID = req.body.calendarID
             newRoom.save(function (err) {
                 if (err)
                     res.send(err)
                 res.json({
                     message: 'Room successfully created'
+                })
+            })
+        })
+        .delete(function (req, res) {
+            Room.findByIdAndRemove({_id: req.body.id}, function (err, user) {
+                if (err)
+                    res.send(err)
+                res.json({
+                    message: user
+                })
+            })
+        })
+    router.route('/calendars')
+        .get(function (req, res) {
+            Calendar.find(function (err, calendars) {
+                if (err)
+                    res.send(err)
+                res.json(calendars)
+            })
+        })
+        .delete(function (req, res) {
+            Calendar.findOneAndRemove({name: req.body.name}, function (err, calendar) {
+                if (err)
+                    res.send(err)
+                res.json(calendar)
+            })
+        })
+        .post(function (req, res) {
+            let newCalendar = new Calendar()
+            newCalendar.name = req.body.name
+            newCalendar.events = req.body.events
+            newCalendar.save(function (err) {
+                if (err)
+                    res.send(err)
+                res.json({
+                    message: 'Calendar successfully created'
                 })
             })
         })

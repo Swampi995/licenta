@@ -75,3 +75,17 @@
         transform: scale(0.8);
     }
 }
+
+.roomContainer {
+    border: solid 1px #d9d9d9;
+    border-bottom: none;
+    height: 800px;
+    overflow: hidden;
+}
+
+.roomRoot {
+    margin-bottom: 24px;
+    margin-right: 24px;
+    maxWidth: 360px;
+    width: 20%;
+}
