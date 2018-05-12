@@ -1,43 +1,42 @@
 /**
  * Created by swpmr on 5/6/2018.
  */
-import React, {Component} from 'react'
-import {Divider, List, ListItem, RaisedButton} from 'material-ui'
+import React from 'react'
+import {Divider, List, RaisedButton} from 'material-ui'
 import HomeServices from "./api/HomeServices";
+import Calendar from "../calendar/Calendar";
+import events from "../calendar/events/events";
 
-export default class Room extends Component {
-
-    constructor(props) {
-        super(props);
-        this.removeRoomFromHome = this.removeRoomFromHome.bind(this);
-        this.state = {
-            room: this.props.location.state.room
-        }
-    }
-
-    removeRoomFromHome() {
-        HomeServices.removeRoom(this.state.room._id).then(() => {
-            this.props.history.push('/');
+const Room = (props) => {
+    function removeRoomFromHome() {
+        HomeServices.removeRoom(props.location.state.room._id).then(() => {
+            props.history.push('/');
         });
-        HomeServices.removeCalendar(this.state.room.name);
+        HomeServices.removeCalendar(props.location.state.room.name);
     }
 
-    render() {
-        return (
-            <div className='roomRoot'>
-                <div className='roomContainer'>
-                    <List>
-                        <ListItem insetChildren={true} primaryText="Janet Perkins Bennet"/>
-                        <ListItem insetChildren={true} primaryText="Aaron Bennet"/>
-                        <ListItem insetChildren={true} primaryText="Abbey Christensen"/>
-                    </List>
-                    <Divider inset={true}/>
-                    <List>
-                        <RaisedButton label="Delete" secondary={true} onClick={this.removeRoomFromHome}
-                                      style={{'margin': '12px', 'marginLeft': '18%'}}/>
-                    </List>
-                </div>
+    return (
+        <div className='room'>
+                <div className='roomRoot'>
+                    <div className='roomContainer'>
+                        <List>
+                            <RaisedButton label="Add Event" primary={true}
+                                          style={{'margin': '12px', 'marginLeft': '18%'}}/>
+                            <RaisedButton label="Invite peoples"
+                                          style={{'margin': '12px', 'marginLeft': '18%'}}/>
+                        </List>
+                        <Divider inset={false}/>
+                        <List>
+                            <RaisedButton label="Delete" secondary={true} onClick={removeRoomFromHome}
+                                          style={{'margin': '12px', 'marginLeft': '18%'}}/>
+                        </List>
+                    </div>
             </div>
-        )
-    }
-}
+            <div className='roomCalendar'>
+                <Calendar events={events}/>
+            </div>
+        </div>
+    )
+};
+
+export default Room;

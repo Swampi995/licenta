@@ -88,3 +88,18 @@
     max-width: 360px;
     width: 20%;
 }
+
+.roomCalendar {
+    position: absolute;
+    left: 21%;
+    width: 78%;
+    height: 88%;
+    top: 2%;
+}
+
+.room {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}

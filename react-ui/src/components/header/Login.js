@@ -7,6 +7,7 @@ import Dialog from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
 import {FlatButton, TextField} from 'material-ui'
 import HeaderServices from "./api/HeaderServices";
+import HomeServices from "../home/api/HomeServices";
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -38,10 +39,11 @@ export default class Login extends React.Component {
         })
     }
 
-    addUser(user) {
+    addUser(user, calendar) {
         HeaderServices.addUser(user).then(() => {
             this.loadUsers();
-        })
+        });
+        HomeServices.postCalendar(calendar);
     }
 
 
@@ -79,8 +81,12 @@ export default class Login extends React.Component {
             user: this.state.username,
             password: this.state.password
         };
+        let calendar = {
+            name: this.state.username,
+            events: [],
+        };
 
-        this.addUser(user);
+        this.addUser(user, calendar);
         this.setState({register: !this.state.register})
     }
 
