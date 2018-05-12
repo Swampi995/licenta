@@ -13,7 +13,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import Login from './Login';
 import './style/header.css';
-import { withRouter } from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 
 class Header extends React.Component {
 
@@ -32,16 +32,16 @@ class Header extends React.Component {
     handleChange = (event, index, value) => this.setState({value});
 
     setLoggedUser(username) {
-      this.setState({loggedUser: username});
+        this.setState({loggedUser: username});
     }
 
     navigateToRoute(path) {
-      this.props.history.push(path);
+        this.props.history.push(path);
     }
 
     logOut() {
-      this.props.changeLoginState(false);
-      this.setLoggedUser('');
+        this.props.changeLoginState(false);
+        this.setLoggedUser('');
     }
 
     render() {
@@ -49,25 +49,35 @@ class Header extends React.Component {
             <Toolbar>
                 <ToolbarGroup firstChild={true}>
                     <DropDownMenu value={this.state.value} onChange={this.handleChange}>
-                          <MenuItem value={1} primaryText="Home" onClick={()=>{this.navigateToRoute('/')}}/>
-                          <MenuItem value={2} primaryText="Calendar" onClick={()=>{this.navigateToRoute('/calendar')}}/>
-                          <MenuItem value={3} primaryText="About" onClick={()=>{this.navigateToRoute('/about')}}/>
+                        <MenuItem value={1} primaryText="Home" onClick={() => {
+                            this.navigateToRoute('/')
+                        }}/>
+                        <MenuItem value={2} primaryText="Calendar" onClick={() => {
+                            this.navigateToRoute('/calendar')
+                        }}/>
+                        <MenuItem value={3} primaryText="About" onClick={() => {
+                            this.navigateToRoute('/about')
+                        }}/>
                     </DropDownMenu>
                 </ToolbarGroup>
                 <ToolbarGroup>
                     <ToolbarTitle text={this.state.loggedUser}/>
                     <FontIcon className="muidocs-icon-custom-sort"/>
                     <ToolbarSeparator/>
-                    <RaisedButton label="Add Event" primary={true} onClick={!this.props.logged ? ()=>{alert("You must log in first")} : null}/>
+                    <RaisedButton label="Add Event" primary={true} onClick={!this.props.logged ? () => {
+                        alert("You must log in first")
+                    } : null}/>
                     <IconMenu
                         iconButtonElement={this.props.logged ?
                             <IconButton touch={true}>
                                 <NavigationExpandMoreIcon/>
-                            </IconButton> : <Login setLoggedUser={this.setLoggedUser} doLogin={() => {this.props.changeLoginState(true)}}/>
+                            </IconButton> : <Login setLoggedUser={this.setLoggedUser} doLogin={() => {
+                                this.props.changeLoginState(true)
+                            }}/>
                         }
                     >
-                      <MenuItem primaryText="Logout" onClick={this.logOut}/>
-                      <MenuItem primaryText="Account"/>
+                        <MenuItem primaryText="Logout" onClick={this.logOut}/>
+                        <MenuItem primaryText="Account"/>
                     </IconMenu>
                 </ToolbarGroup>
             </Toolbar>
@@ -76,8 +86,8 @@ class Header extends React.Component {
 }
 
 Header.propTypes = {
-  logged: PropTypes.bool,
-  changeLoginState: PropTypes.func
+    logged: PropTypes.bool,
+    changeLoginState: PropTypes.func
 }
 
 export default withRouter(Header);

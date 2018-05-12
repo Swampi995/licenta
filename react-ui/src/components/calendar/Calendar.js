@@ -12,17 +12,17 @@ BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 export default class Calendar extends Component {
 
-  render() {
-    return (
-      <div className='mainCalendar'>
-        <BigCalendar
-          culture='en-GB'
-          events={events}
-          step={60}
-          defaultView='week'
-          showMultiDayTimes
-        />
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div className='mainCalendar'>
+                <BigCalendar
+                    culture='en-GB'
+                    events={events}
+                    step={60}
+                    defaultView='week'
+                    showMultiDayTimes
+                />
+            </div>
+        );
+    }
 }

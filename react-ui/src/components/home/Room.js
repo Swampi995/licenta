@@ -1,43 +1,28 @@
 /**
  * Created by swpmr on 5/6/2018.
  */
-import React, { Component } from 'react'
-import axios from 'axios'
-import { Divider, List, ListItem, RaisedButton } from 'material-ui'
+import React, {Component} from 'react'
+import {Divider, List, ListItem, RaisedButton} from 'material-ui'
+import HomeServices from "./api/HomeServices";
 
 export default class Room extends Component {
 
-    constructor (props) {
-        super(props)
-        this.removeRoom = this.removeRoom.bind(this)
-        this.removeCalendar = this.removeCalendar.bind(this)
+    constructor(props) {
+        super(props);
+        this.removeRoomFromHome = this.removeRoomFromHome.bind(this);
         this.state = {
             room: this.props.location.state.room
         }
     }
 
-    removeRoom () {
-        axios.delete('http://localhost:5000/api/rooms', {data: {id: this.state.room._id}})
-            .then(res => {
-                this.props.history.push('/')
-                console.log(res)
-            })
-            .catch(err => {
-                console.error(err)
-            })
+    removeRoomFromHome() {
+        HomeServices.removeRoom(this.state.room._id).then(() => {
+            this.props.history.push('/');
+        });
+        HomeServices.removeCalendar(this.state.room.name);
     }
 
-    removeCalendar () {
-        axios.delete('http://localhost:5000/api/calendars', {data: {name: this.state.room.name}})
-            .then(res => {
-                console.log(res)
-            })
-            .catch(err => {
-                console.error(err)
-            })
-    }
-
-    render () {
+    render() {
         return (
             <div className='roomRoot'>
                 <div className='roomContainer'>
@@ -48,10 +33,7 @@ export default class Room extends Component {
                     </List>
                     <Divider inset={true}/>
                     <List>
-                        <RaisedButton label="Delete" secondary={true} onClick={() => {
-                            this.removeRoom();
-                            this.removeCalendar();
-                        }}
+                        <RaisedButton label="Delete" secondary={true} onClick={this.removeRoomFromHome}
                                       style={{'margin': '12px', 'marginLeft': '18%'}}/>
                     </List>
                 </div>

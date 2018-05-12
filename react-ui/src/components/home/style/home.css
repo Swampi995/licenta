@@ -7,13 +7,12 @@
     height: 250px;
     width: 250px;
     margin: 20px;
-    textAlign: center;
+    text-align: center;
     display: inline-block;
     /*background-image: url('homeBackground.jpg');*/
     background-size: cover;
     -webkit-transition:all 0.5s ease-out;
     -moz-transition:all 0.5s ease-out;
-    -ms-transition:all 0.5s ease-out;
     -o-transition:all 0.5s ease-out;
     transition:all 0.5s ease-out;
 }
@@ -79,13 +78,13 @@
 .roomContainer {
     border: solid 1px #d9d9d9;
     border-bottom: none;
-    height: 800px;
+    height: 500px;
     overflow: hidden;
 }
 
 .roomRoot {
     margin-bottom: 24px;
     margin-right: 24px;
-    maxWidth: 360px;
+    max-width: 360px;
     width: 20%;
 }

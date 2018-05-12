@@ -1,18 +1,18 @@
 /**
  * Created by swpmr on 5/6/2018.
  */
-import React, { Component } from 'react'
-import { Dialog, RaisedButton, TextField } from 'material-ui'
-import axios from 'axios'
+import React, {Component} from 'react'
+import {Dialog, RaisedButton, TextField} from 'material-ui'
+import HomeServices from "./api/HomeServices";
 
 export default class Room extends Component {
 
-    constructor (props) {
-        super(props)
-        this.handleChange = this.handleChange.bind(this)
-        this.postRoom = this.postRoom.bind(this)
-        this.addRoom = this.addRoom.bind(this)
-        this.setErrorMessage = this.setErrorMessage.bind(this)
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.addRoom = this.addRoom.bind(this);
+        this.createNewRoom = this.createNewRoom.bind(this);
+        this.setErrorMessage = this.setErrorMessage.bind(this);
         this.state = {
             name: 'Room',
             seats: 50,
@@ -21,31 +21,30 @@ export default class Room extends Component {
     }
 
     handleChange = name => event => {
-        this.setErrorMessage('')
+        this.setErrorMessage('');
         this.setState({
             [name]: event.target.value,
         })
-    }
+    };
 
-    setErrorMessage (message) {
+    setErrorMessage(message) {
         this.setState({errorText: message})
     }
 
-    addRoom () {
-        let roomName = this.props.rooms.filter(room => room.name === this.state.name)
+    addRoom() {
+        let roomName = this.props.rooms.filter(room => room.name === this.state.name);
         if (roomName.length === 0) {
             let room = {
                 name: this.state.name,
                 seats: this.state.seats,
-            }
+            };
 
             let calendar = {
                 name: this.state.name,
                 events: [],
-            }
+            };
 
-            this.postRoom(room);
-            this.postCalendar(calendar);
+            this.createNewRoom(room, calendar);
             this.props.handleCloseAddRoom();
         }
         else {
@@ -54,28 +53,14 @@ export default class Room extends Component {
 
     }
 
-    postCalendar (calendar) {
-        axios.post('http://localhost:5000/api/calendars', calendar)
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                console.error(err)
-            })
+    createNewRoom(room, calendar) {
+        HomeServices.postCalendar(calendar);
+        HomeServices.postRoom(room).then(() => {
+            this.props.loadRooms();
+        })
     }
 
-    postRoom (room) {
-        axios.post('http://localhost:5000/api/rooms', room)
-            .then(res => {
-                this.props.loadRooms();
-                console.log(res);
-            })
-            .catch(err => {
-                console.error(err)
-            })
-    }
-
-    render () {
+    render() {
         const actions = [
             <RaisedButton style={{'margin': '12px'}} onClick={this.props.handleCloseAddRoom} secondary>
                 Cancel
@@ -83,7 +68,7 @@ export default class Room extends Component {
             <RaisedButton style={{'margin': '12px'}} onClick={this.addRoom} primary>
                 Submit
             </RaisedButton>
-        ]
+        ];
         return (
             <Dialog
                 title="Add Room"
@@ -96,12 +81,12 @@ export default class Room extends Component {
                     value={this.state.name}
                     errorText={this.state.errorText}
                     floatingLabelText="Room Name"
-                /><br />
+                /><br/>
                 <TextField
                     onChange={this.handleChange('seats')}
                     value={this.state.seats}
                     floatingLabelText="Seats"
-                /><br />
+                /><br/>
             </Dialog>
         )
     }

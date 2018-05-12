@@ -1,19 +1,20 @@
 /**
  * Created by swpmr on 3/11/2018.
  */
-import React, { Component } from 'react'
-import { GridList, GridTile, Paper } from 'material-ui'
+import React, {Component} from 'react'
+import {GridList, GridTile, Paper} from 'material-ui'
 import './style/home.css'
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import AddRoom from './AddRoom'
-import HomeService from './api'
+import HomeServices from "./api/HomeServices";
 
 export default class Home extends Component {
 
-    constructor (props) {
-        super(props)
-        this.handleOpenAddRoom = this.handleOpenAddRoom.bind(this)
-        this.handleCloseAddRoom = this.handleCloseAddRoom.bind(this)
+    constructor(props) {
+        super(props);
+        this.handleOpenAddRoom = this.handleOpenAddRoom.bind(this);
+        this.handleCloseAddRoom = this.handleCloseAddRoom.bind(this);
+        this.loadRooms = this.loadRooms.bind(this);
         this.state = {
             open: false,
             rooms: []
@@ -21,20 +22,24 @@ export default class Home extends Component {
     }
 
     componentDidMount() {
-        HomeService.loadRooms().then((data) => {
+        this.loadRooms();
+    }
+
+    loadRooms() {
+        HomeServices.loadRooms().then((data) => {
             this.setState({rooms: data})
         })
     }
 
     handleOpenAddRoom = () => {
         this.setState({open: true})
-    }
+    };
 
     handleCloseAddRoom = () => {
         this.setState({open: false})
-    }
+    };
 
-    render () {
+    render() {
         return (
             <div className='roomDivider'>
                 <GridList
@@ -55,7 +60,8 @@ export default class Home extends Component {
                         </Paper>
                     </GridTile>
                 </GridList>
-                <AddRoom rooms={this.state.rooms} loadRooms={this.loadRooms} open={this.state.open} handleOpenAddRoom={this.handleOpenAddRoom} handleCloseAddRoom={this.handleCloseAddRoom}/>
+                <AddRoom rooms={this.state.rooms} loadRooms={this.loadRooms} open={this.state.open}
+                         handleOpenAddRoom={this.handleOpenAddRoom} handleCloseAddRoom={this.handleCloseAddRoom}/>
             </div>
         )
     }

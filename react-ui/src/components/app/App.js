@@ -13,7 +13,7 @@ export default class App extends React.Component {
     }
 
     changeLoginState(value) {
-        this.setState({logged : value})
+        this.setState({logged: value})
     }
 
     render() {
