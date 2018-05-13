@@ -6,8 +6,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
 import {FlatButton, TextField} from 'material-ui'
-import HeaderServices from "./api/HeaderServices";
-import HomeServices from "../home/api/HomeServices";
+import UsersServices from "../../api/UsersServices"
+import CalendarServices from '../../api/CalendarServices'
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -34,16 +34,16 @@ export default class Login extends React.Component {
     }
 
     loadUsers() {
-        HeaderServices.loadUsers().then(data => {
+        UsersServices.loadUsers().then(data => {
             this.setState({users: data})
         })
     }
 
     addUser(user, calendar) {
-        HeaderServices.addUser(user).then(() => {
+        UsersServices.addUser(user).then(() => {
             this.loadUsers();
         });
-        HomeServices.postCalendar(calendar);
+        CalendarServices.postCalendar(calendar);
     }
 
 

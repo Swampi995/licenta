@@ -3,9 +3,10 @@
  */
 import React, {Component} from 'react'
 import {Dialog, RaisedButton, TextField} from 'material-ui'
-import HomeServices from "./api/HomeServices";
+import RoomsServices from "../../api/RoomsServices";
+import CalendarServices from '../../api/CalendarServices'
 
-export default class Room extends Component {
+export default class AddRoom extends Component {
 
     constructor(props) {
         super(props);
@@ -54,8 +55,8 @@ export default class Room extends Component {
     }
 
     createNewRoom(room, calendar) {
-        HomeServices.postCalendar(calendar);
-        HomeServices.postRoom(room).then(() => {
+        CalendarServices.postCalendar(calendar);
+        RoomsServices.postRoom(room).then(() => {
             this.props.loadRooms();
         })
     }

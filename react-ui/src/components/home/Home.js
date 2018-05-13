@@ -6,7 +6,7 @@ import {GridList, GridTile, Paper} from 'material-ui'
 import './style/home.css'
 import {Link} from 'react-router-dom'
 import AddRoom from './AddRoom'
-import HomeServices from "./api/HomeServices";
+import RoomsServices from "../../api/RoomsServices";
 
 export default class Home extends Component {
 
@@ -26,7 +26,7 @@ export default class Home extends Component {
     }
 
     loadRooms() {
-        HomeServices.loadRooms().then((data) => {
+        RoomsServices.loadRooms().then((data) => {
             this.setState({rooms: data})
         })
     }

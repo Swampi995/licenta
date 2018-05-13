@@ -52,10 +52,7 @@ class Header extends React.Component {
                         <MenuItem value={1} primaryText="Home" onClick={() => {
                             this.navigateToRoute('/')
                         }}/>
-                        <MenuItem value={2} primaryText="Calendar" onClick={() => {
-                            this.navigateToRoute('/calendar')
-                        }}/>
-                        <MenuItem value={3} primaryText="About" onClick={() => {
+                        <MenuItem value={2} primaryText="About" onClick={() => {
                             this.navigateToRoute('/about')
                         }}/>
                     </DropDownMenu>

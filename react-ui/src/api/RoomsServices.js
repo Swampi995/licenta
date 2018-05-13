@@ -3,11 +3,11 @@
  */
 import axios from 'axios'
 
-export default class HeaderServices {
+export default class RoomsServices {
 
-    static loadUsers() {
+    static loadRooms() {
         return new Promise((resolve, reject) => {
-            axios.get('http://localhost:5000/api/users')
+            axios.get('http://localhost:5000/api/rooms')
                 .then((response) => {
                     resolve(response.data)
                 })
@@ -17,9 +17,21 @@ export default class HeaderServices {
         })
     }
 
-    static addUser(user) {
+    static removeRoom(roomID) {
         return new Promise((resolve, reject) => {
-            axios.post('http://localhost:5000/api/users', user)
+            axios.delete('http://localhost:5000/api/rooms', {data: {id: roomID}})
+                .then((response) => {
+                    resolve(response.data)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
+
+    static postRoom(room) {
+        return new Promise((resolve, reject) => {
+            axios.post('http://localhost:5000/api/rooms', room)
                 .then((response) => {
                     resolve(response.data)
                 })

@@ -6,7 +6,7 @@ import { Switch, Route } from 'react-router-dom'
 import Home from '../home/Home'
 import About from '../about/About'
 import Calendar from '../calendar/Calendar'
-import Room from '../home/Room'
+import Room from '../room/Room'
 
 const Main = () => (
   <main>
