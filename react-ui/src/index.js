@@ -4,10 +4,9 @@ import App from './components/app/App'
 import { BrowserRouter } from 'react-router-dom'
 import { MuiThemeProvider } from 'material-ui'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import rootReducer from './reducers'
+import createStore from './store'
 
-const store = createStore(rootReducer)
+const store = createStore();
 
 ReactDOM.render((
     <Provider store={store}>

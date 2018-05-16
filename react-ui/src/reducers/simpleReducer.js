@@ -1,0 +1,13 @@
+/**
+ * Created by swpmr on 5/16/2018.
+ */
+export default (state = {}, action) => {
+    switch (action.type) {
+        case 'SIMPLE_ACTION':
+            return {
+                result: action.payload
+            }
+        default:
+            return state
+    }
+}
