@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 
 let calendarSchema = new Schema({
     name: String,
-    events: Object,
+    events: Array,
 });
 
 module.exports = mongoose.model('calendar', calendarSchema);
