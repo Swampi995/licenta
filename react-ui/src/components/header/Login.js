@@ -5,13 +5,13 @@ import React from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
 import Dialog from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
-import {FlatButton, TextField} from 'material-ui'
-import UsersServices from "../../api/UsersServices"
+import { FlatButton, TextField } from 'material-ui'
+import UsersServices from '../../api/UsersServices'
 import CalendarServices from '../../api/CalendarServices'
 
 export default class Login extends React.Component {
-    constructor(props) {
-        super(props);
+    constructor (props) {
+        super(props)
         this.state = {
             users: [],
             register: false,
@@ -22,94 +22,93 @@ export default class Login extends React.Component {
             newUsername: '',
             newPassword: '',
             confirmPassword: ''
-        };
-        this.handleClickOpen = this.handleClickOpen.bind(this);
-        this.handleRequestClose = this.handleRequestClose.bind(this);
-        this.handleRequestLogin = this.handleRequestLogin.bind(this);
+        }
+        this.handleClickOpen = this.handleClickOpen.bind(this)
+        this.handleRequestClose = this.handleRequestClose.bind(this)
+        this.handleRequestLogin = this.handleRequestLogin.bind(this)
         this.handleRequestRegister = this.handleRequestRegister.bind(this)
     }
 
-    componentWillMount() {
+    componentDidMount () {
         this.loadUsers()
     }
 
-    loadUsers() {
+    loadUsers () {
         UsersServices.loadUsers().then(data => {
             this.setState({users: data})
         })
     }
 
-    addUser(user, calendar) {
+    addUser (user, calendar) {
         UsersServices.addUser(user).then(() => {
-            this.loadUsers();
-        });
-        CalendarServices.postCalendar(calendar);
+            this.loadUsers()
+        })
+        CalendarServices.postCalendar(calendar)
     }
-
 
     handleClickOpen = () => {
         this.setState({open: true})
-    };
+    }
 
     handleRequestClose = () => {
         this.setState({
             open: false,
             register: false
         })
-    };
-
-    requestLogin() {
-        let user = this.state.users.filter(user => user.user === this.state.username);
-        user[0] && user[0].password === this.state.password ? this.doLogin(user[0]) : this.setErrorMessage('Wrong username or password!')
     }
 
-    requestRegister() {
-        let user = this.state.users.filter(user => user.user === this.state.username);
+    requestLogin () {
+        UsersServices.requestLogin(this.state.username, this.state.password).then(user => {
+            user.length !== 0 ? this.doLogin(user[0]) : this.setErrorMessage('Wrong username or password!')
+        })
+    }
+
+    requestRegister () {
+        let user = this.state.users.filter(user => user.user === this.state.username)
         if (user.length === 0) {
             this.state.password === this.state.confirmPassword ? this.postUser() : this.setErrorMessage('Password must be the same!')
-        } else this.setErrorMessage('Username already used!');
+        } else this.setErrorMessage('Username already used!')
     }
 
-    doLogin(user) {
-        this.props.setLoggedUser(user.user);
-        this.props.doLogin();
-        this.setState({open: false})
+    doLogin (user) {
+        this.props.setLoggedUser(user.user)
+        this.props.doLogin()
     }
 
-    postUser() {
+    postUser () {
         let user = {
             user: this.state.username,
             password: this.state.password
-        };
+        }
         let calendar = {
             name: this.state.username,
             events: [],
-        };
+        }
 
-        this.addUser(user, calendar);
+        this.addUser(user, calendar)
         this.setState({register: !this.state.register})
     }
 
-    setErrorMessage(message) {
+    setErrorMessage (message) {
         this.setState({errorText: message})
     }
 
     handleRequestLogin = () => {
         this.state.username !== '' && this.state.password !== '' ? this.requestLogin() : this.setErrorMessage('Wrong username or password!')
-    };
+    }
 
     handleRequestRegister = () => {
         this.state.username !== '' && this.state.password !== '' ? this.requestRegister() : this.setErrorMessage('Username and password must not be empty!')
-    };
+    }
 
     handleChange = name => event => {
-        this.setErrorMessage('');
+        this.setErrorMessage('')
         this.setState({
             [name]: event.target.value,
         })
-    };
+    }
 
-    render() {
+    render () {
         const actionLogin = [
             <FlatButton className='login-form-button' onClick={() => {
                 this.setState({register: !this.state.register})
@@ -121,7 +120,7 @@ export default class Login extends React.Component {
             <RaisedButton className='login-form-button' onClick={this.handleRequestLogin} primary>
                 Login
             </RaisedButton>
-        ];
+        ]
         const actionsRegister = [
             <RaisedButton className='login-form-button' onClick={this.handleRequestClose} secondary>
                 Cancel
@@ -129,7 +128,7 @@ export default class Login extends React.Component {
             <RaisedButton className='login-form-button' onClick={this.handleRequestRegister} primary>
                 Register
             </RaisedButton>,
-        ];
+        ]
         const textFieldLogin = [
             <div key={'textFieldLogin'}>
                 <TextField
@@ -147,7 +146,7 @@ export default class Login extends React.Component {
                     onChange={this.handleChange('password')}
                 />
             </div>
-        ];
+        ]
         const textFieldRegister = [
             <div key={'textFieldRegister'}>
                 <TextField
@@ -172,7 +171,7 @@ export default class Login extends React.Component {
                     onChange={this.handleChange('confirmPassword')}
                 />
             </div>
-        ];
+        ]
         return (
             <div>
                 <RaisedButton onClick={this.handleClickOpen}>Login</RaisedButton>
@@ -192,4 +191,4 @@ export default class Login extends React.Component {
 Login.propTypes = {
     setLoggedUser: PropTypes.func,
     doLogin: PropTypes.func
-};
+}

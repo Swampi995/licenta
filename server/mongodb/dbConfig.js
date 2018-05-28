@@ -30,7 +30,7 @@ module.exports = function (app) {
     db.on('error', console.error.bind(console, 'MongoDB connection error:'))
     router.route('/users')
         .get(function (req, res) {
-            User.find(function (err, users) {
+            User.find({}, {'_id': 1, 'user': 1, 'status': 1}, function (err, users) {
                 if (err)
                     res.send(err)
                 res.json(users)
@@ -40,12 +40,21 @@ module.exports = function (app) {
             let newUser = new User()
             newUser.user = req.body.user
             newUser.password = req.body.password
+            newUser.status = false
             newUser.save(function (err) {
                 if (err)
                     res.send(err)
                 res.json({
                     message: 'User successfully created'
                 })
+            })
+        })
+    router.route('/login')
+        .get(function (req, res) {
+            User.find({user: req.query.username, password: req.query.password}, function (err, users) {
+                if (err)
+                    res.send(err)
+                res.json(users)
             })
         })
     router.route('/rooms')
@@ -107,8 +116,8 @@ module.exports = function (app) {
         })
     router.route('/events')
         .put(function (req, res) {
-            let name = req.body.name;
-            let events = req.body.events;
+            let name = req.body.name
+            let events = req.body.events
             Calendar.findOneAndUpdate({name: name}, {$set: {events: events}}, {new: true}, function (err, doc) {
                 if (err)
                     res.send(err)

@@ -28,4 +28,16 @@ export default class UsersServices {
                 })
         })
     }
+
+    static requestLogin(username, password) {
+        return new Promise((resolve, reject) => {
+            axios.get('http://localhost:5000/api/login', {params: {username: username, password: password}})
+                .then((response) => {
+                    resolve(response.data)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
 }
