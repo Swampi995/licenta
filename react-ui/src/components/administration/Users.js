@@ -10,7 +10,7 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table'
-import { RaisedButton, TableFooter } from 'material-ui'
+import { Dialog, RaisedButton, TableFooter, TextField } from 'material-ui'
 import UsersServices from '../../api/UsersServices'
 import CalendarServices from '../../api/CalendarServices'
 
@@ -19,17 +19,45 @@ export default class Users extends Component {
     constructor (props) {
         super(props)
         this.loadUsers = this.loadUsers.bind(this)
+        this.loadGroups = this.loadGroups.bind(this)
         this.createGroupToggle = this.createGroupToggle.bind(this)
         this.isSelected = this.isSelected.bind(this)
         this.handleRowSelection = this.handleRowSelection.bind(this)
         this.deleteSelectedUser = this.deleteSelectedUser.bind(this)
         this.resetSelected = this.resetSelected.bind(this)
         this.changeUserPermission = this.changeUserPermission.bind(this)
+        this.createGroupWithSelectedUsers = this.createGroupWithSelectedUsers.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.setErrorMessage = this.setErrorMessage.bind(this)
         this.state = {
             users: [],
+            groups: [],
             createGroup: false,
             selected: [],
+            open: false,
+            groupName: '',
+            errorText: ''
         }
+    }
+
+    componentDidMount () {
+        this.loadUsers()
+        this.loadGroups()
+    }
+
+    loadGroups () {
+        UsersServices.loadGroups().then((groups) => {
+            this.setState({groups})
+        })
+    }
+
+    handleOpen = () => {
+        this.setState({open: true})
+    }
+
+    handleClose = () => {
+        this.setState({open: false})
+        this.setState({groupName: ''})
     }
 
     isSelected = (index) => {
@@ -42,15 +70,15 @@ export default class Users extends Component {
         })
     }
 
+    setErrorMessage (message) {
+        this.setState({errorText: message})
+    }
+
     createGroupToggle () {
         this.setState({
             createGroup: !this.state.createGroup
         })
         this.resetSelected()
-    }
-
-    componentDidMount () {
-        this.loadUsers()
     }
 
     loadUsers () {
@@ -59,25 +87,52 @@ export default class Users extends Component {
         })
     }
 
-    resetSelected() {
+    resetSelected () {
         this.setState({selected: []})
     }
 
-    deleteSelectedUser() {
+    deleteSelectedUser () {
         let user = this.state.users[this.state.selected].user
         UsersServices.deleteUser(user).then(() => {
             CalendarServices.removeCalendar(user)
-            this.loadUsers();
-            this.resetSelected();
+            this.loadUsers()
+            this.resetSelected()
         })
     }
 
-    changeUserPermission() {
+    changeUserPermission () {
         let user = this.state.users[this.state.selected]
         let object = {user: user.user, status: !user.status}
         UsersServices.changeUserPermission(object).then(() => {
             this.loadUsers()
         })
+    }
+
+    handleChange = name => event => {
+        this.setErrorMessage('')
+        this.setState({
+            [name]: event.target.value,
+        })
+    }
+
+    createGroupWithSelectedUsers () {
+        let groupExists = this.state.groups.filter(group => group.name === this.state.groupName)
+        if (groupExists.length === 0) {
+            let selectedUsers = this.state.selected.map((index) => {
+                let user = this.state.users[index]
+                let object = {user: user.user, group: [...user.group, this.state.groupName]}
+                UsersServices.updateUserGroup(object)
+                return user
+            })
+            let group = {name: this.state.groupName, users: selectedUsers}
+            UsersServices.createGroup(group).then(() => {
+                this.loadUsers()
+                this.loadGroups()
+            })
+            this.handleClose()
+        } else {
+            this.setErrorMessage('Group name already exists')
+        }
     }
 
     render () {
@@ -90,12 +145,14 @@ export default class Users extends Component {
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                    <RaisedButton className='middle-user-button' disabled={this.state.selected.length === 0} secondary onClick={this.deleteSelectedUser}>
+                    <RaisedButton className='middle-user-button' disabled={this.state.selected.length === 0} secondary
+                                  onClick={this.deleteSelectedUser}>
                         Delete
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn>
-                    <RaisedButton className='left-user-button' primary disabled={this.state.selected.length === 0} onClick={this.changeUserPermission}>
+                    <RaisedButton className='left-user-button' primary disabled={this.state.selected.length === 0}
+                                  onClick={this.changeUserPermission}>
                         Change user permission
                     </RaisedButton>
                 </TableRowColumn>
@@ -110,12 +167,22 @@ export default class Users extends Component {
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn>
-                    <RaisedButton className='left-user-button' primary>
+                    <RaisedButton className='left-user-button' primary disabled={this.state.selected.length === 0}
+                                  onClick={this.handleOpen}>
                         Create group
                     </RaisedButton>
                 </TableRowColumn>
             </TableRow>
         )
+
+        let actions = [
+            <RaisedButton className='login-form-button' onClick={this.handleClose} secondary>
+                Cancel
+            </RaisedButton>,
+            <RaisedButton className='login-form-button' onClick={this.createGroupWithSelectedUsers} primary>
+                Create group
+            </RaisedButton>,
+        ]
 
         return (
             <div>
@@ -135,6 +202,7 @@ export default class Users extends Component {
                         <TableRow>
                             <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
                             <TableHeaderColumn tooltip="The Username">Name</TableHeaderColumn>
+                            <TableHeaderColumn tooltip="The Group of a user">Group</TableHeaderColumn>
                             <TableHeaderColumn tooltip="Is user admin">Admin</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
@@ -148,17 +216,30 @@ export default class Users extends Component {
                             <TableRow selected={this.isSelected(index)} key={index}>
                                 <TableRowColumn>{index}</TableRowColumn>
                                 <TableRowColumn>{row.user}</TableRowColumn>
-                                <TableRowColumn>
-                                    {row.status.toString()}
-                                </TableRowColumn>
+                                <TableRowColumn>{row.group.toString()}</TableRowColumn>
+                                <TableRowColumn>{row.status.toString()}</TableRowColumn>
                             </TableRow>
                         ))}
-
                     </TableBody>
                     <TableFooter>
                         {this.state.createGroup ? createGroupButtons : editUserButtons}
                     </TableFooter>
                 </Table>
+                <Dialog
+                    title="Create group panel"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                >
+                    <TextField
+                        id='groupName'
+                        errorText={this.state.errorText}
+                        floatingLabelText='Group Name'
+                        value={this.state.groupName}
+                        onChange={this.handleChange('groupName')}
+                    />
+                </Dialog>
             </div>
         )
     }

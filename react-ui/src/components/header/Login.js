@@ -8,8 +8,10 @@ import PropTypes from 'prop-types'
 import { FlatButton, TextField } from 'material-ui'
 import UsersServices from '../../api/UsersServices'
 import CalendarServices from '../../api/CalendarServices'
+import { connect } from 'react-redux'
+import { loginAction } from '../../actions/loginAction'
 
-export default class Login extends React.Component {
+class Login extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
@@ -72,6 +74,7 @@ export default class Login extends React.Component {
 
     doLogin (user) {
         this.props.setLoggedUser(user.user)
+        this.props.loginAction(user)
         this.props.doLogin()
     }
 
@@ -192,3 +195,13 @@ Login.propTypes = {
     setLoggedUser: PropTypes.func,
     doLogin: PropTypes.func
 }
+
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    loginAction: (user) => dispatch(loginAction(user))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

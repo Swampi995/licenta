@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const User = require('./models/user')
 const Room = require('./models/room')
 const Calendar = require('./models/calendar')
+const Group = require('./models/group')
 const router = express.Router()
 
 module.exports = function (app) {
@@ -30,7 +31,7 @@ module.exports = function (app) {
     db.on('error', console.error.bind(console, 'MongoDB connection error:'))
     router.route('/users')
         .get(function (req, res) {
-            User.find({}, {'_id': 1, 'user': 1, 'status': 1}, function (err, users) {
+            User.find({}, {'_id': 1, 'user': 1, 'status': 1, 'group': 1}, function (err, users) {
                 if (err)
                     res.send(err)
                 res.json(users)
@@ -41,6 +42,7 @@ module.exports = function (app) {
             newUser.user = req.body.user
             newUser.password = req.body.password
             newUser.status = false
+            newUser.group = []
             newUser.save(function (err) {
                 if (err)
                     res.send(err)
@@ -56,8 +58,17 @@ module.exports = function (app) {
                 res.json(user)
             })
         })
+    router.route('/users/updatePermission')
         .put(function (req, res) {
             User.findOneAndUpdate({user: req.body.user}, {$set: {status: req.body.status}}, {new: true}, function (err, user) {
+                if (err)
+                    res.send(err)
+                res.json(user)
+            })
+        })
+    router.route('/users/updateGroup')
+        .put(function (req, res) {
+            User.findOneAndUpdate({user: req.body.user}, {$set: {group: req.body.group}}, {new: true}, function (err, user) {
                 if (err)
                     res.send(err)
                 res.json(user)
@@ -134,6 +145,26 @@ module.exports = function (app) {
                 if (err)
                     res.send(err)
                 res.json(calendar)
+            })
+        })
+    router.route('/groups')
+        .post(function (req, res) {
+            let newGroup = new Group()
+            newGroup.name = req.body.name
+            newGroup.users = req.body.users
+            newGroup.save(function (err) {
+                if (err)
+                    res.send(err)
+                res.json({
+                    message: 'Group successfully created'
+                })
+            })
+        })
+        .get(function (req, res) {
+            Group.find(function (err, groups) {
+                if (err)
+                    res.send(err)
+                res.json(groups)
             })
         })
 }

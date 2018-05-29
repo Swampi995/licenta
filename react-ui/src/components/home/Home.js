@@ -7,8 +7,6 @@ import './style/home.css'
 import {Link} from 'react-router-dom'
 import AddRoom from './AddRoom'
 import RoomsServices from "../../api/RoomsServices";
-import { connect } from 'react-redux'
-import { simpleAction } from '../../actions/simpleAction'
 
 class Home extends Component {
 
@@ -69,12 +67,4 @@ class Home extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    ...state
-})
-
-const mapDispatchToProps = dispatch => ({
-    simpleAction: () => dispatch(simpleAction())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default Home

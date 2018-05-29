@@ -1,50 +1,52 @@
 /**
  * Created by swpmr on 3/11/2018.
  */
-import React from 'react';
+import React from 'react'
 import PropTypes from 'prop-types'
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import MenuItem from 'material-ui/MenuItem';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import RaisedButton from 'material-ui/RaisedButton';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import Login from './Login';
-import './style/header.css';
-import {withRouter} from 'react-router-dom'
+import IconMenu from 'material-ui/IconMenu'
+import IconButton from 'material-ui/IconButton'
+import FontIcon from 'material-ui/FontIcon'
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more'
+import MenuItem from 'material-ui/MenuItem'
+import DropDownMenu from 'material-ui/DropDownMenu'
+import RaisedButton from 'material-ui/RaisedButton'
+import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar'
+import Login from './Login'
+import './style/header.css'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { loginAction } from '../../actions/loginAction'
 
 class Header extends React.Component {
 
-    constructor(props) {
-        super(props);
+    constructor (props) {
+        super(props)
         this.state = {
             value: 1,
             loggedUser: '',
-        };
+        }
 
-        this.setLoggedUser = this.setLoggedUser.bind(this);
-        this.navigateToRoute = this.navigateToRoute.bind(this);
-        this.logOut = this.logOut.bind(this);
+        this.setLoggedUser = this.setLoggedUser.bind(this)
+        this.navigateToRoute = this.navigateToRoute.bind(this)
+        this.logOut = this.logOut.bind(this)
     }
 
-    handleChange = (event, index, value) => this.setState({value});
+    handleChange = (event, index, value) => this.setState({value})
 
-    setLoggedUser(username) {
-        this.setState({loggedUser: username});
+    setLoggedUser (username) {
+        this.setState({loggedUser: username})
     }
 
-    navigateToRoute(path) {
-        this.props.history.push(path);
+    navigateToRoute (path) {
+        this.props.history.push(path)
     }
 
-    logOut() {
-        this.props.changeLoginState(false);
-        this.setLoggedUser('');
+    logOut () {
+        this.props.changeLoginState(false)
+        this.setLoggedUser('')
     }
 
-    render() {
+    render () {
         return (
             <Toolbar>
                 <ToolbarGroup firstChild={true}>
@@ -52,12 +54,12 @@ class Header extends React.Component {
                         <MenuItem value={1} primaryText="Home" onClick={() => {
                             this.navigateToRoute('/')
                         }}/>
-                        <MenuItem value={2} primaryText="Users" onClick={() => {
+                        {this.props.logged && this.props.loggedInUser.status ? <MenuItem value={2} primaryText="Users" onClick={() => {
                             this.navigateToRoute('/users')
-                        }}/>
-                        <MenuItem value={3} primaryText="About" onClick={() => {
+                        }}/> : null}
+                        {this.props.logged ? < MenuItem value={3} primaryText="About" onClick={() => {
                             this.navigateToRoute('/about')
-                        }}/>
+                        }}/> : null }
                     </DropDownMenu>
                 </ToolbarGroup>
                 <ToolbarGroup>
@@ -65,15 +67,14 @@ class Header extends React.Component {
                     <FontIcon className="muidocs-icon-custom-sort"/>
                     <ToolbarSeparator/>
                     <RaisedButton label="Add Event" primary={true} onClick={!this.props.logged ? () => {
-                        alert("You must log in first")
+                        alert('You must log in first')
                     } : null}/>
                     <IconMenu
-                        iconButtonElement={this.props.logged ?
-                            <IconButton touch={true}>
-                                <NavigationExpandMoreIcon/>
-                            </IconButton> : <Login setLoggedUser={this.setLoggedUser} doLogin={() => {
-                                this.props.changeLoginState(true)
-                            }}/>
+                        iconButtonElement={this.props.logged ? <IconButton touch={true}>
+                            <NavigationExpandMoreIcon/>
+                        </IconButton> : <Login setLoggedUser={this.setLoggedUser} doLogin={() => {
+                            this.props.changeLoginState(true)
+                        }}/>
                         }
                     >
                         <MenuItem primaryText="Logout" onClick={this.logOut}/>
@@ -81,7 +82,7 @@ class Header extends React.Component {
                     </IconMenu>
                 </ToolbarGroup>
             </Toolbar>
-        );
+        )
     }
 }
 
@@ -90,4 +91,12 @@ Header.propTypes = {
     changeLoginState: PropTypes.func
 }
 
-export default withRouter(Header);
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    loginAction: (user) => dispatch(loginAction(user))
+})
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header))

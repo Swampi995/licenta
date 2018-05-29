@@ -55,7 +55,7 @@ export default class UsersServices {
 
     static changeUserPermission(user) {
         return new Promise((resolve, reject) => {
-            axios.put('http://localhost:5000/api/users', user)
+            axios.put('http://localhost:5000/api/users/updatePermission', user)
                 .then((response) => {
                     resolve(response.data)
                 })
@@ -64,4 +64,41 @@ export default class UsersServices {
                 })
         })
     }
+
+    static createGroup(group) {
+        return new Promise((resolve, reject) => {
+            axios.post('http://localhost:5000/api/groups', group)
+                .then((response) => {
+                    resolve(response.data)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
+
+    static updateUserGroup(user) {
+        return new Promise((resolve, reject) => {
+            axios.put('http://localhost:5000/api/users/updateGroup', user)
+                .then((response) => {
+                    resolve(response.data)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
+
+    static loadGroups() {
+        return new Promise((resolve, reject) => {
+            axios.get('http://localhost:5000/api/groups')
+                .then((response) => {
+                    resolve(response.data)
+                })
+                .catch(error => {
+                    reject(error)
+                })
+        })
+    }
+
 }

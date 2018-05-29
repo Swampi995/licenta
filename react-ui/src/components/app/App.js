@@ -2,12 +2,13 @@ import React from 'react'
 import Main from '../main/Main'
 import Header from '../header/Header'
 
-export default class App extends React.Component {
+class App extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            logged: false
+            logged: false,
+
         };
         this.changeLoginState = this.changeLoginState.bind(this);
     }
@@ -20,10 +21,12 @@ export default class App extends React.Component {
         return (
             <div>
                 <Header logged={this.state.logged} changeLoginState={this.changeLoginState}/>
-                {/*{this.state.logged ? <Main/> : null}*/}
-                <Main/>
+                {this.state.logged ? <Main/> : null}
+                {/*<Main/>*/}
             </div>
         )
     }
 }
 
+
+export default App

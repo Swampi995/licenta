@@ -2,11 +2,9 @@
  * Created by swpmr on 5/6/2018.
  */
 import React, {Component} from 'react'
-import { connect } from 'react-redux';
 import {Dialog, RaisedButton, TextField} from 'material-ui'
 import RoomsServices from "../../api/RoomsServices";
 import CalendarServices from '../../api/CalendarServices'
-import { simpleAction } from '../../actions/simpleAction'
 
 class AddRoom extends Component {
 
@@ -36,7 +34,6 @@ class AddRoom extends Component {
 
     addRoom() {
         let roomName = this.props.rooms.filter(room => room.name === this.state.name);
-        this.props.simpleAction();
         if (roomName.length === 0) {
             let room = {
                 name: this.state.name,
@@ -96,12 +93,4 @@ class AddRoom extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    ...state
-})
-
-const mapDispatchToProps = dispatch => ({
-    simpleAction: () => dispatch(simpleAction())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddRoom);
+export default AddRoom;
