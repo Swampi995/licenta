@@ -49,6 +49,20 @@ module.exports = function (app) {
                 })
             })
         })
+        .delete(function (req, res) {
+            User.findOneAndRemove({user: req.body.username}, function (err, user) {
+                if (err)
+                    res.send(err)
+                res.json(user)
+            })
+        })
+        .put(function (req, res) {
+            User.findOneAndUpdate({user: req.body.user}, {$set: {status: req.body.status}}, {new: true}, function (err, user) {
+                if (err)
+                    res.send(err)
+                res.json(user)
+            })
+        })
     router.route('/login')
         .get(function (req, res) {
             User.find({user: req.query.username, password: req.query.password}, function (err, users) {
@@ -116,15 +130,10 @@ module.exports = function (app) {
         })
     router.route('/events')
         .put(function (req, res) {
-            let name = req.body.name
-            let events = req.body.events
-            Calendar.findOneAndUpdate({name: name}, {$set: {events: events}}, {new: true}, function (err, doc) {
+            Calendar.findOneAndUpdate({name: req.body.name}, {$set: {events: req.body.events}}, {new: true}, function (err, calendar) {
                 if (err)
                     res.send(err)
-                res.json({
-                    message: 'Events successfully updated'
-                })
-
+                res.json(calendar)
             })
         })
 }

@@ -20,7 +20,8 @@ export default class App extends React.Component {
         return (
             <div>
                 <Header logged={this.state.logged} changeLoginState={this.changeLoginState}/>
-                {this.state.logged ? <Main/> : null}
+                {/*{this.state.logged ? <Main/> : null}*/}
+                <Main/>
             </div>
         )
     }

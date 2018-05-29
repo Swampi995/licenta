@@ -10,8 +10,9 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table'
-import { Checkbox, RaisedButton, TableFooter } from 'material-ui'
+import { RaisedButton, TableFooter } from 'material-ui'
 import UsersServices from '../../api/UsersServices'
+import CalendarServices from '../../api/CalendarServices'
 
 export default class Users extends Component {
 
@@ -21,6 +22,9 @@ export default class Users extends Component {
         this.createGroupToggle = this.createGroupToggle.bind(this)
         this.isSelected = this.isSelected.bind(this)
         this.handleRowSelection = this.handleRowSelection.bind(this)
+        this.deleteSelectedUser = this.deleteSelectedUser.bind(this)
+        this.resetSelected = this.resetSelected.bind(this)
+        this.changeUserPermission = this.changeUserPermission.bind(this)
         this.state = {
             users: [],
             createGroup: false,
@@ -42,6 +46,7 @@ export default class Users extends Component {
         this.setState({
             createGroup: !this.state.createGroup
         })
+        this.resetSelected()
     }
 
     componentDidMount () {
@@ -51,6 +56,27 @@ export default class Users extends Component {
     loadUsers () {
         UsersServices.loadUsers().then((users) => {
             this.setState({users})
+        })
+    }
+
+    resetSelected() {
+        this.setState({selected: []})
+    }
+
+    deleteSelectedUser() {
+        let user = this.state.users[this.state.selected].user
+        UsersServices.deleteUser(user).then(() => {
+            CalendarServices.removeCalendar(user)
+            this.loadUsers();
+            this.resetSelected();
+        })
+    }
+
+    changeUserPermission() {
+        let user = this.state.users[this.state.selected]
+        let object = {user: user.user, status: !user.status}
+        UsersServices.changeUserPermission(object).then(() => {
+            this.loadUsers()
         })
     }
 
@@ -64,13 +90,13 @@ export default class Users extends Component {
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                    <RaisedButton className='middle-user-button' secondary>
+                    <RaisedButton className='middle-user-button' disabled={this.state.selected.length === 0} secondary onClick={this.deleteSelectedUser}>
                         Delete
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn>
-                    <RaisedButton className='left-user-button' primary onClick={() => {console.log(this.state.users[this.state.selected])}}>
-                        Save user
+                    <RaisedButton className='left-user-button' primary disabled={this.state.selected.length === 0} onClick={this.changeUserPermission}>
+                        Change user permission
                     </RaisedButton>
                 </TableRowColumn>
             </TableRow>
@@ -80,11 +106,11 @@ export default class Users extends Component {
             <TableRow>
                 <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
                     <RaisedButton className='left-user-button' onClick={this.createGroupToggle}>
-                        Edit user
+                        Edit users
                     </RaisedButton>
                 </TableRowColumn>
                 <TableRowColumn>
-                    <RaisedButton className='left-user-button' primary onClick={() => {console.log(this.state.selected)}}>
+                    <RaisedButton className='left-user-button' primary>
                         Create group
                     </RaisedButton>
                 </TableRowColumn>
@@ -123,9 +149,7 @@ export default class Users extends Component {
                                 <TableRowColumn>{index}</TableRowColumn>
                                 <TableRowColumn>{row.user}</TableRowColumn>
                                 <TableRowColumn>
-                                    <Checkbox
-                                        checked={row.status}
-                                    />
+                                    {row.status.toString()}
                                 </TableRowColumn>
                             </TableRow>
                         ))}
