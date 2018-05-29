@@ -118,12 +118,21 @@ export default class Users extends Component {
     createGroupWithSelectedUsers () {
         let groupExists = this.state.groups.filter(group => group.name === this.state.groupName)
         if (groupExists.length === 0) {
-            let selectedUsers = this.state.selected.map((index) => {
-                let user = this.state.users[index]
-                let object = {user: user.user, group: [...user.group, this.state.groupName]}
-                UsersServices.updateUserGroup(object)
-                return user
-            })
+            let selectedUsers
+            if (this.state.selected === 'all') {
+                selectedUsers = this.state.users.map((index) => {
+                    let object = {user: index.user, group: [...index.group, this.state.groupName]}
+                    UsersServices.updateUserGroup(object)
+                    return index
+                })
+            } else {
+                selectedUsers = this.state.selected.map((index) => {
+                    let user = this.state.users[index]
+                    let object = {user: user.user, group: [...user.group, this.state.groupName]}
+                    UsersServices.updateUserGroup(object)
+                    return user
+                })
+            }
             let group = {name: this.state.groupName, users: selectedUsers}
             UsersServices.createGroup(group).then(() => {
                 this.loadUsers()
