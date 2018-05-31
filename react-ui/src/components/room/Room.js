@@ -2,7 +2,10 @@
  * Created by swpmr on 5/6/2018.
  */
 import React, { Component } from 'react'
-import { Divider, Drawer, List, RaisedButton, TextField } from 'material-ui'
+import {
+    Divider, Drawer, List, MenuItem, RaisedButton, SelectField, Table, TableBody, TableRow, TableRowColumn,
+    TextField
+} from 'material-ui'
 import DateTimePicker from 'material-ui-datetimepicker'
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog'
@@ -10,6 +13,7 @@ import RoomsServices from '../../api/RoomsServices'
 import Calendar from '../calendar/Calendar'
 import CalendarServices from '../../api/CalendarServices'
 import './style/room.css'
+import UsersServices from '../../api/UsersServices'
 
 export default class Room extends Component {
 
@@ -22,21 +26,37 @@ export default class Room extends Component {
         this.handleChange = this.handleChange.bind(this)
         this.addHours = this.addHours.bind(this)
         this.loadCalendar = this.loadCalendar.bind(this)
+        this.handleToggleInvitePeople = this.handleToggleInvitePeople.bind(this)
+        this.handleInviteGroups = this.handleInviteGroups.bind(this)
+        this.isSelected = this.isSelected.bind(this)
+        this.handleRowSelection = this.handleRowSelection.bind(this)
+        this.handleChangeEvent = this.handleChangeEvent.bind(this)
         this.state = {
             events: [],
+            groups: [],
             calendar: '',
             open: false,
             eventName: '',
             eventDate: '',
-            eventLength: ''
+            eventLength: '',
+            openInvitePeople: false,
+            selected: [],
+            valueEvent: 0
         }
     }
 
     componentDidMount () {
         this.loadCalendar()
+        this.loadGroups()
     }
 
-    loadCalendar() {
+    loadGroups () {
+        UsersServices.loadGroups().then((groups) => {
+            this.setState({groups})
+        })
+    }
+
+    loadCalendar () {
         CalendarServices.getCalendar(this.props.location.state.room.name).then((calendar) => {
             this.setState({calendar})
             let parsedEvents = calendar.events.map(event => {
@@ -58,11 +78,25 @@ export default class Room extends Component {
         })
     }
 
+    handleChangeEvent = (event, index, valueEvent) => this.setState({valueEvent})
+
     handleToggle = () => this.setState({open: !this.state.open})
+
+    handleToggleInvitePeople = () => this.setState({openInvitePeople: !this.state.openInvitePeople})
 
     handleChangeDate = (date) => {
         this.setState({
             eventDate: date,
+        })
+    }
+
+    isSelected = (index) => {
+        return this.state.selected.indexOf(index) !== -1
+    }
+
+    handleRowSelection = (selectedRows) => {
+        this.setState({
+            selected: selectedRows,
         })
     }
 
@@ -80,13 +114,39 @@ export default class Room extends Component {
     }
 
     handleAddEvent () {
-        let lastEvents = this.state.calendar.events;
-        let events = [...lastEvents, {id: lastEvents.length + 1, title: this.state.eventName, start: this.state.eventDate, end: this.addHours()}]
+        let lastEvents = this.state.calendar.events
+        let events = [...lastEvents, {
+            id: lastEvents.length + 1,
+            title: this.state.eventName,
+            start: this.state.eventDate,
+            end: this.addHours()
+        }]
         let object = {name: this.props.location.state.room.name, events: events}
         CalendarServices.updateEvents(object).then(() => {
             this.loadCalendar()
         })
         this.handleToggle()
+    }
+
+    handleInviteGroups () {
+        this.state.selected.map((index) => {
+            let group = this.state.groups[index]
+            group.users.map((user) => {
+                CalendarServices.getCalendar(user.user).then((calendar) => {
+                        let lastEvents = calendar.events
+                        let events = [...lastEvents, {
+                            id: lastEvents.length + 1,
+                            title: this.state.events[this.state.valueEvent].title,
+                            start: this.state.events[this.state.valueEvent].start,
+                            end: this.state.events[this.state.valueEvent].end
+                        }]
+                        let object = {name: user.user, events: events}
+                        CalendarServices.updateEvents(object)
+                    }
+                )
+            })
+        })
+        this.handleToggleInvitePeople()
     }
 
     render () {
@@ -99,6 +159,7 @@ export default class Room extends Component {
                                           onClick={this.handleToggle}
                                           style={{'margin': '12px', 'marginLeft': '18%'}}/>
                             <RaisedButton label="Invite peoples"
+                                          onClick={this.handleToggleInvitePeople}
                                           style={{'margin': '12px', 'marginLeft': '18%'}}/>
                         </List>
                         <Divider inset={false}/>
@@ -134,6 +195,49 @@ export default class Room extends Component {
                                 </RaisedButton>
                                 <RaisedButton className='login-form-button' onClick={this.handleAddEvent} primary>
                                     OK
+                                </RaisedButton>
+                            </div>
+                        </Drawer>
+                        <Drawer width={360} docked={false} containerClassName={'roomDrawer'}
+                                open={this.state.openInvitePeople}>
+                            <div style={{'textAlign': 'end'}}>
+                                <SelectField
+                                    hintText="Select an event"
+                                    value={this.state.valueEvent}
+                                    onChange={this.handleChangeEvent}
+                                >
+                                    {this.state.events.map((event, index) => (
+                                        <MenuItem key={index} value={index} primaryText={event.title}/>
+                                    ))}
+                                </SelectField>
+                                <Table
+                                    height={'500px'}
+                                    fixedHeader={true}
+                                    fixedFooter={true}
+                                    selectable={true}
+                                    multiSelectable={true}
+                                    onRowSelection={this.handleRowSelection}
+                                >
+                                    <TableBody
+                                        displayRowCheckbox={true}
+                                        deselectOnClickaway={false}
+                                        showRowHover={true}
+                                        stripedRows={false}
+                                    >
+                                        {this.state.groups.map((row, index) => (
+                                            <TableRow selected={this.isSelected(index)} key={index}>
+                                                <TableRowColumn>{index}</TableRowColumn>
+                                                <TableRowColumn>{row.name}</TableRowColumn>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                <RaisedButton className='login-form-button' onClick={this.handleToggleInvitePeople}
+                                              secondary>
+                                    Cancel
+                                </RaisedButton>
+                                <RaisedButton className='login-form-button' onClick={this.handleInviteGroups} primary>
+                                    Invite
                                 </RaisedButton>
                             </div>
                         </Drawer>
