@@ -6,13 +6,13 @@ import { Switch, Route } from 'react-router-dom'
 import Home from '../home/Home'
 import About from '../about/About'
 import Room from '../room/Room'
-import Users from '../administration/Users'
+import Administration from '../administration/Administration'
 
 const Main = () => (
     <main>
         <Switch>
             <Route exact path='/' component={Home}/>
-            <Route exact path='/users' component={Users}/>
+            <Route exact path='/administration' component={Administration}/>
             <Route exact path='/room' component={Room}/>
             <Route path='/about' component={About}/>
         </Switch>

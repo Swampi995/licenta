@@ -50,23 +50,24 @@ class Header extends React.Component {
         return (
             <Toolbar>
                 <ToolbarGroup firstChild={true}>
-                    <DropDownMenu value={this.state.value} onChange={this.handleChange}>
+                    {this.props.logged ? <DropDownMenu value={this.state.value} onChange={this.handleChange}>
                         <MenuItem value={1} primaryText="Home" onClick={() => {
                             this.navigateToRoute('/')
                         }}/>
-                        {this.props.logged && this.props.loggedInUser.status ? <MenuItem value={2} primaryText="Users" onClick={() => {
-                            this.navigateToRoute('/users')
-                        }}/> : null}
-                        {this.props.logged ? < MenuItem value={3} primaryText="About" onClick={() => {
+                        {this.props.loggedInUser.status ?
+                            <MenuItem value={2} primaryText="Users and Groups" onClick={() => {
+                                this.navigateToRoute('/administration')
+                            }}/> : null}
+                        < MenuItem value={3} primaryText="About" onClick={() => {
                             this.navigateToRoute('/about')
-                        }}/> : null }
-                    </DropDownMenu>
+                        }}/>
+                    </DropDownMenu> : null}
                 </ToolbarGroup>
                 <ToolbarGroup>
                     <ToolbarTitle text={this.state.loggedUser}/>
                     <FontIcon className="muidocs-icon-custom-sort"/>
                     <ToolbarSeparator/>
-                    <RaisedButton label="Add Event" primary={true} onClick={!this.props.logged ? () => {
+                    <RaisedButton label="My calendar" primary={true} onClick={!this.props.logged ? () => {
                         alert('You must log in first')
                     } : null}/>
                     <IconMenu

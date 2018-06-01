@@ -48,6 +48,7 @@ export default class Users extends Component {
     loadGroups () {
         UsersServices.loadGroups().then((groups) => {
             this.setState({groups})
+            this.props.loadGroupsInParent(groups)
         })
     }
 

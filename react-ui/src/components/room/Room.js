@@ -129,9 +129,9 @@ export default class Room extends Component {
     }
 
     handleInviteGroups () {
-        this.state.selected.map((index) => {
+        this.state.selected.forEach((index) => {
             let group = this.state.groups[index]
-            group.users.map((user) => {
+            group.users.forEach((user) => {
                 CalendarServices.getCalendar(user.user).then((calendar) => {
                         let lastEvents = calendar.events
                         let events = [...lastEvents, {
