@@ -158,7 +158,7 @@ export default class Room extends Component {
                             <RaisedButton label="Add Event" primary={true}
                                           onClick={this.handleToggle}
                                           style={{'margin': '12px', 'marginLeft': '18%'}}/>
-                            <RaisedButton label="Invite peoples"
+                            <RaisedButton label="Invite people"
                                           onClick={this.handleToggleInvitePeople}
                                           style={{'margin': '12px', 'marginLeft': '18%'}}/>
                         </List>
