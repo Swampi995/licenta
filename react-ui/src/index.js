@@ -25,8 +25,7 @@ const muiTheme = getMuiTheme({
     },
     "toolbar": {
         "backgroundColor": "#9e9e9e"
-    },
-    "borderRadius": 10
+    }
 });
 
 ReactDOM.render((
