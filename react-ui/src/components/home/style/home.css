@@ -9,8 +9,8 @@
     margin: 20px;
     text-align: center;
     display: inline-block;
-    background: url('baseline-meeting_room.svg') no-repeat;
-    background-size: 120px;
+    background: url('classRoom.png') no-repeat;
+    background-size: 140px;
     background-position-x: 30px;
     background-position-y: 30px;
     -webkit-transition:all 0.5s ease-out;

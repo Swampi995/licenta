@@ -49,7 +49,7 @@ class Home extends Component {
                         <GridTile key={room._id}>
                             <Link to={{pathname: '/room', state: {room: room}}}>
                                 <Paper className='roomPaper' zDepth={3}>
-                                    {room.name}
+                                    <h2 style={{'margin': '180px 1px 12px 30%'}}>{room.name}</h2>
                                 </Paper>
                             </Link>
                         </GridTile>
