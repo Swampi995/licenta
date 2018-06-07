@@ -9,7 +9,7 @@ import { Dialog, FlatButton } from 'material-ui'
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
-export default class Calendar extends React.Component {
+export default class RoomCalendar extends React.Component {
 
     constructor (props) {
         super(props)

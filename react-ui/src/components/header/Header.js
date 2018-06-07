@@ -16,20 +16,32 @@ import './style/header.css'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { loginAction } from '../../actions/loginAction'
+import {Dialog, FlatButton} from "material-ui";
+import RoomCalendar from "../calendar/RoomCalendar";
 
 class Header extends React.Component {
 
     constructor (props) {
         super(props)
         this.state = {
+            open: false,
             value: 1,
             loggedUser: '',
+            events: []
         }
 
         this.setLoggedUser = this.setLoggedUser.bind(this)
         this.navigateToRoute = this.navigateToRoute.bind(this)
         this.logOut = this.logOut.bind(this)
     }
+
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
 
     handleChange = (event, index, value) => this.setState({value})
 
@@ -47,6 +59,15 @@ class Header extends React.Component {
     }
 
     render () {
+
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onClick={this.handleClose}
+            />
+        ];
+
         return (
             <Toolbar>
                 <ToolbarGroup firstChild={true}>
@@ -69,7 +90,7 @@ class Header extends React.Component {
                     <ToolbarSeparator/>
                     <RaisedButton label="My calendar" primary={true} onClick={!this.props.logged ? () => {
                         alert('You must log in first')
-                    } : null}/>
+                    } : this.handleOpen}/>
                     <IconMenu
                         iconButtonElement={this.props.logged ? <IconButton touch={true}>
                             <NavigationExpandMoreIcon/>
@@ -82,6 +103,15 @@ class Header extends React.Component {
                         <MenuItem primaryText="Account"/>
                     </IconMenu>
                 </ToolbarGroup>
+                <Dialog
+                    title="Dialog With Actions"
+                    actions={actions}
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                >
+
+                </Dialog>
             </Toolbar>
         )
     }

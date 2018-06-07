@@ -10,7 +10,7 @@ import DateTimePicker from 'material-ui-datetimepicker'
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog'
 import RoomsServices from '../../api/RoomsServices'
-import Calendar from '../calendar/Calendar'
+import RoomCalendar from '../calendar/RoomCalendar'
 import CalendarServices from '../../api/CalendarServices'
 import './style/room.css'
 import UsersServices from '../../api/UsersServices'
@@ -265,8 +265,8 @@ export default class Room extends Component {
                     </div>
                 </div>
                 <div className='roomCalendar'>
-                    <Calendar events={this.state.events} room={this.props.location.state.room}
-                              groups={this.state.groups}/>
+                    <RoomCalendar events={this.state.events} room={this.props.location.state.room}
+                                  groups={this.state.groups}/>
                 </div>
             </div>
         )
