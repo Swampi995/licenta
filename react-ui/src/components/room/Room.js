@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react'
 import {
-    Divider, Drawer, List, MenuItem, RaisedButton, SelectField, Table, TableBody, TableRow, TableRowColumn,
+    Divider, Drawer, List, MenuItem, RaisedButton, SelectField, Subheader, Table, TableBody, TableRow, TableRowColumn,
     TextField
 } from 'material-ui'
 import DateTimePicker from 'material-ui-datetimepicker'
@@ -64,7 +64,8 @@ export default class Room extends Component {
                     id: event.id,
                     title: event.title,
                     start: new Date(event.start),
-                    end: new Date(event.end)
+                    end: new Date(event.end),
+                    groupsInvited: event.groupsInvited
                 }
                 return parsedEvent
             })
@@ -129,6 +130,7 @@ export default class Room extends Component {
     }
 
     handleInviteGroups () {
+        let selectedGroups = this.state.selected.map(index => this.state.groups[index].name)
         this.state.selected.forEach((index) => {
             let group = this.state.groups[index]
             group.users.forEach((user) => {
@@ -138,13 +140,31 @@ export default class Room extends Component {
                             id: lastEvents.length + 1,
                             title: this.state.events[this.state.valueEvent].title,
                             start: this.state.events[this.state.valueEvent].start,
-                            end: this.state.events[this.state.valueEvent].end
+                            end: this.state.events[this.state.valueEvent].end,
+                            groupsInvited: selectedGroups
                         }]
                         let object = {name: user.user, events: events}
                         CalendarServices.updateEvents(object)
                     }
                 )
             })
+        })
+        CalendarServices.getCalendar(this.props.location.state.room.name).then((calendar) => {
+            let events = calendar.events.map(event => {
+                if (event.title === this.state.events[this.state.valueEvent].title)
+                    return {
+                        id: event.id,
+                        title: event.title,
+                        start: event.start,
+                        end: event.end,
+                        groupsInvited: selectedGroups
+                    }
+                else
+                    return event
+            })
+
+            let object = {name: this.props.location.state.room.name, events: events}
+            CalendarServices.updateEvents(object).then(this.loadCalendar())
         })
         this.handleToggleInvitePeople()
     }
@@ -155,6 +175,7 @@ export default class Room extends Component {
                 <div className='roomRoot'>
                     <div className='roomContainer'>
                         <List>
+                            <h2 style={{'margin': '12px', 'marginLeft': '18%', 'color':'#b39ddb'}}>{this.props.location.state.room.name}</h2>
                             <RaisedButton label="Add Event" primary={true}
                                           onClick={this.handleToggle}
                                           style={{'margin': '12px', 'marginLeft': '18%'}}/>
@@ -244,7 +265,8 @@ export default class Room extends Component {
                     </div>
                 </div>
                 <div className='roomCalendar'>
-                    <Calendar events={this.state.events}/>
+                    <Calendar events={this.state.events} room={this.props.location.state.room}
+                              groups={this.state.groups}/>
                 </div>
             </div>
         )
