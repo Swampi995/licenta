@@ -17,7 +17,8 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { loginAction } from '../../actions/loginAction'
 import {Dialog, FlatButton} from "material-ui";
-import RoomCalendar from "../calendar/RoomCalendar";
+import UserCalendar from "../calendar/UserCalendar";
+import CalendarServices from "../../api/CalendarServices";
 
 class Header extends React.Component {
 
@@ -47,6 +48,20 @@ class Header extends React.Component {
 
     setLoggedUser (username) {
         this.setState({loggedUser: username})
+        if (username) {
+            CalendarServices.getCalendar(username).then((calendar) => {
+                let parsedEvents = calendar.events.map(event => {
+                    let parsedEvent = {
+                        id: event.id,
+                        title: event.title,
+                        start: new Date(event.start),
+                        end: new Date(event.end)
+                    }
+                    return parsedEvent
+                })
+                this.setState({events: parsedEvents})
+            })
+        }
     }
 
     navigateToRoute (path) {
@@ -104,13 +119,13 @@ class Header extends React.Component {
                     </IconMenu>
                 </ToolbarGroup>
                 <Dialog
-                    title="Dialog With Actions"
                     actions={actions}
-                    modal={false}
+                    modal={true}
                     open={this.state.open}
+                    autoScrollBodyContent={true}
                     onRequestClose={this.handleClose}
                 >
-
+                    <UserCalendar events={this.state.events}/>
                 </Dialog>
             </Toolbar>
         )

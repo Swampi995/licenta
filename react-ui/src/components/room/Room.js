@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react'
 import {
-    Divider, Drawer, List, MenuItem, RaisedButton, SelectField, Subheader, Table, TableBody, TableRow, TableRowColumn,
+    Divider, Drawer, List, MenuItem, RaisedButton, SelectField, Table, TableBody, TableRow, TableRowColumn,
     TextField
 } from 'material-ui'
 import DateTimePicker from 'material-ui-datetimepicker'
