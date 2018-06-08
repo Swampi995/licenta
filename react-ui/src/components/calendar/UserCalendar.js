@@ -40,7 +40,6 @@ export default class UserCalendar extends React.Component {
         return (
             <React.Fragment>
                 <BigCalendar
-                    selectable
                     culture='en-GB'
                     events={this.props.events}
                     step={60}
